@@ -79,8 +79,7 @@ class ReservationSystemTests(unittest.TestCase):
         hotel_info = Hotel.display_hotel_information(self.storage, "H1")
         self.assertEqual(hotel_info["available_rooms"], 0)
 
-        cancelled = Hotel.cancel_a_reservation(
-            self.storage, str(reservation_id))
+        cancelled = Hotel.cancel_a_reservation(self.storage, str(reservation_id))
         self.assertTrue(cancelled)
 
         hotel_info2 = Hotel.display_hotel_information(self.storage, "H1")
@@ -153,8 +152,7 @@ class ReservationSystemTests(unittest.TestCase):
         """Negative: create customer with empty ID."""
         buf = StringIO()
         with redirect_stdout(buf):
-            created = Customer.create_customer(
-                self.storage, "", "Name", "x@x.com")
+            created = Customer.create_customer(self.storage, "", "Name", "x@x.com")
         self.assertFalse(created)
         self.assertIn("ERROR:", buf.getvalue())
 
@@ -305,13 +303,7 @@ class ReservationSystemTests(unittest.TestCase):
         self.assertIsNone(res_id)
         self.assertIn("ERROR:", buf.getvalue())
 
-    # -------------------------
-    # MANEJO DE ARCHIVOS INVÁLIDOS (Req 5)
-    # -------------------------
-
-    def test_invalid_json_file_is_handled_and_execution_continues(
-            self) -> None:
-        """Invalid JSON in file prints error and returns empty list."""
+    def test_invalid_json_file_is_handled_and_execution_continues(self) -> None:
         invalid_path = Path(self.tmp.name) / "hotels.json"
         invalid_path.write_text("{ invalid json", encoding="utf-8")
 

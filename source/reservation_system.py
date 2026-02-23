@@ -8,8 +8,8 @@ Implementa:
 - Métodos CRUD + reservar/cancelar
 """
 # pylint: disable=too-many-arguments
-# pylint: too-many-positional-arguments
-# pylint: too-many-return-statements
+# pylint: disable=too-many-positional-arguments
+# pylint: disable=too-many-return-statements
 
 from __future__ import annotations
 
