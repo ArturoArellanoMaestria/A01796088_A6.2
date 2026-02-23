@@ -6,10 +6,9 @@ test_delete_customer_success (test_reservation_system.ReservationSystemTests.tes
 Delete existing customer. ... ok
 test_delete_hotel_success (test_reservation_system.ReservationSystemTests.test_delete_hotel_success)
 Delete existing hotel. ... ok
-test_invalid_json_file_is_handled_and_execution_continues (test_reservation_system.ReservationSystemTests.test_invalid_json_file_is_handled_and_execution_continues)
-Invalid JSON in file prints error and returns empty list. ... ok
+test_invalid_json_file_is_handled_and_execution_continues (test_reservation_system.ReservationSystemTests.test_invalid_json_file_is_handled_and_execution_continues) ... ok
 test_invalid_json_type_is_handled (test_reservation_system.ReservationSystemTests.test_invalid_json_type_is_handled)
-Invalid JSON type should not crash and should return empty list. ... ok
+JSON type dict instead of list should not crash. ... ok
 test_modify_customer_success (test_reservation_system.ReservationSystemTests.test_modify_customer_success)
 Modify customer name/email. ... ok
 test_modify_hotel_success (test_reservation_system.ReservationSystemTests.test_modify_hotel_success)
@@ -40,7 +39,7 @@ test_reservation_and_cancel_success (test_reservation_system.ReservationSystemTe
 Reserve and cancel a reservation updates availability. ... ok
 
 ----------------------------------------------------------------------
-Ran 20 tests in 0.263s
+Ran 20 tests in 0.159s
 
 OK
 ERROR: Invalid JSON in 'hotels' file 'hotels.json': Expecting property name enclosed in double quotes: line 1 column 3 (char 2). Using empty list.
