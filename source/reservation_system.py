@@ -11,6 +11,18 @@ Implementa:
 # pylint: disable=too-many-positional-arguments
 # pylint: disable=too-many-return-statements
 
+"""
+Reservation System - Actividad 6.2 (Ejercicio 3)
+
+Implementa:
+- Hotel, Customer, Reservation
+- Persistencia en archivos JSON
+- Manejo de datos inválidos en archivo: imprime error y continúa
+- Métodos CRUD + reservar/cancelar
+"""
+
+# pylint: disable=R0913,R0917,R0911
+
 from __future__ import annotations
 
 import json
@@ -47,6 +59,7 @@ class ReservationStorage:
         self.hotels_path = Path(hotels_path)
         self.customers_path = Path(customers_path)
         self.reservations_path = Path(reservations_path)
+
         self._ensure_file(self.hotels_path)
         self._ensure_file(self.customers_path)
         self._ensure_file(self.reservations_path)
@@ -75,12 +88,14 @@ class ReservationStorage:
         try:
             content = path.read_text(encoding="utf-8")
             data = json.loads(content)
+
             if not isinstance(data, list):
                 _print_error(
                     f"Invalid data type in '{label}' file. "
                     "Expected JSON list; using empty list."
                 )
                 return []
+
             clean: List[Dict[str, Any]] = []
             for item in data:
                 if isinstance(item, dict):
@@ -91,6 +106,7 @@ class ReservationStorage:
                         "Skipping record."
                     )
             return clean
+
         except json.JSONDecodeError as exc:
             _print_error(
                 f"Invalid JSON in '{label}' file '{path.name}': {exc}. "
@@ -101,8 +117,12 @@ class ReservationStorage:
             _print_error(f"Cannot read '{label}' file '{path.name}': {exc}")
             return []
 
-    def _save_list(self, path: Path, label: str,
-                   records: List[Dict[str, Any]]) -> bool:
+    def _save_list(
+        self,
+        path: Path,
+        label: str,
+        records: List[Dict[str, Any]],
+    ) -> bool:
         """Save list of dict records to JSON file."""
         try:
             path.write_text(
@@ -139,8 +159,11 @@ class ReservationStorage:
         return self._save_list(self.reservations_path, "reservations", records)
 
 
-def _find_record(records: List[Dict[str, Any]],
-                 key: str, value: str) -> Optional[Dict[str, Any]]:
+def _find_record(
+    records: List[Dict[str, Any]],
+    key: str,
+    value: str,
+) -> Optional[Dict[str, Any]]:
     """Find first record with records[i][key] == value."""
     for record in records:
         if record.get(key) == value:
@@ -151,6 +174,7 @@ def _find_record(records: List[Dict[str, Any]],
 @dataclass
 class Customer:
     """Customer entity and persistence behaviors."""
+
     customer_id: str
     name: str
     email: str
@@ -199,9 +223,10 @@ class Customer:
 
     @classmethod
     def delete_customer(
-            cls,
-            storage: ReservationStorage,
-            customer_id: str) -> bool:
+        cls,
+        storage: ReservationStorage,
+        customer_id: str,
+    ) -> bool:
         """Delete a customer by ID."""
         if not _is_non_empty_str(customer_id):
             _print_error("Customer ID must be a non-empty string.")
@@ -209,11 +234,12 @@ class Customer:
 
         customers = storage.load_customers()
         before = len(customers)
-        customers = [c for c in customers if c.get(
-            "customer_id") != customer_id]
+        customers = [c for c in customers if c.get("customer_id") != customer_id]
+
         if len(customers) == before:
             _print_error(f"Customer '{customer_id}' does not exist.")
             return False
+
         return storage.save_customers(customers)
 
     @classmethod
@@ -229,9 +255,11 @@ class Customer:
 
         customers = storage.load_customers()
         customer = _find_record(customers, "customer_id", customer_id)
+
         if customer is None:
             _print_error(f"Customer '{customer_id}' not found.")
             return None
+
         return dict(customer)
 
     @classmethod
@@ -256,6 +284,7 @@ class Customer:
 
         customers = storage.load_customers()
         customer = _find_record(customers, "customer_id", customer_id)
+
         if customer is None:
             _print_error(f"Customer '{customer_id}' not found.")
             return False
@@ -271,6 +300,7 @@ class Customer:
 @dataclass
 class Hotel:
     """Hotel entity and persistence behaviors."""
+
     hotel_id: str
     name: str
     total_rooms: int
@@ -330,9 +360,11 @@ class Hotel:
         hotels = storage.load_hotels()
         before = len(hotels)
         hotels = [h for h in hotels if h.get("hotel_id") != hotel_id]
+
         if len(hotels) == before:
             _print_error(f"Hotel '{hotel_id}' does not exist.")
             return False
+
         return storage.save_hotels(hotels)
 
     @classmethod
@@ -348,9 +380,11 @@ class Hotel:
 
         hotels = storage.load_hotels()
         hotel = _find_record(hotels, "hotel_id", hotel_id)
+
         if hotel is None:
             _print_error(f"Hotel '{hotel_id}' not found.")
             return None
+
         return dict(hotel)
 
     @classmethod
@@ -371,14 +405,14 @@ class Hotel:
             return False
 
         if total_rooms is not None and (
-            not isinstance(
-                total_rooms,
-                int) or total_rooms <= 0):
+            not isinstance(total_rooms, int) or total_rooms <= 0
+        ):
             _print_error("Total rooms must be an integer > 0.")
             return False
 
         hotels = storage.load_hotels()
         hotel = _find_record(hotels, "hotel_id", hotel_id)
+
         if hotel is None:
             _print_error(f"Hotel '{hotel_id}' not found.")
             return False
@@ -390,11 +424,13 @@ class Hotel:
             current_total = int(hotel.get("total_rooms", 0))
             current_available = int(hotel.get("available_rooms", 0))
             reserved = current_total - current_available
+
             if total_rooms < reserved:
                 _print_error(
                     "Cannot reduce total rooms below already reserved rooms."
                 )
                 return False
+
             delta = total_rooms - current_total
             hotel["total_rooms"] = total_rooms
             hotel["available_rooms"] = current_available + delta
@@ -410,12 +446,7 @@ class Hotel:
         start_date: str,
         end_date: str,
     ) -> Optional[str]:
-        """
-        Reserve a room for a customer in a given hotel.
-
-        This is a wrapper for Reservation.create_reservation to satisfy
-        the Hotel abstraction requirement.
-        """
+        """Reserve a room (wrapper)."""
         return Reservation.create_reservation(
             storage=storage,
             customer_id=customer_id,
@@ -437,6 +468,7 @@ class Hotel:
 @dataclass
 class Reservation:
     """Reservation entity and persistence behaviors."""
+
     reservation_id: str
     customer_id: str
     hotel_id: str
@@ -457,10 +489,11 @@ class Reservation:
 
     @staticmethod
     def _validate_fields(
-            customer_id: Any,
-            hotel_id: Any,
-            start_date: Any,
-            end_date: Any) -> bool:
+        customer_id: Any,
+        hotel_id: Any,
+        start_date: Any,
+        end_date: Any,
+    ) -> bool:
         """Validate reservation inputs."""
         if not _is_non_empty_str(customer_id):
             _print_error("Customer ID must be a non-empty string.")
@@ -493,11 +526,7 @@ class Reservation:
         - Hotel must have availability
         - Updates hotel availability and saves reservation
         """
-        if not cls._validate_fields(
-                customer_id,
-                hotel_id,
-                start_date,
-                end_date):
+        if not cls._validate_fields(customer_id, hotel_id, start_date, end_date):
             return None
 
         customers = storage.load_customers()
@@ -544,9 +573,10 @@ class Reservation:
 
     @classmethod
     def cancel_reservation(
-            cls,
-            storage: ReservationStorage,
-            reservation_id: str) -> bool:
+        cls,
+        storage: ReservationStorage,
+        reservation_id: str,
+    ) -> bool:
         """
         Cancel a reservation.
 
@@ -559,10 +589,8 @@ class Reservation:
             return False
 
         reservations = storage.load_reservations()
-        reservation = _find_record(
-            reservations,
-            "reservation_id",
-            reservation_id)
+        reservation = _find_record(reservations, "reservation_id", reservation_id)
+
         if reservation is None:
             _print_error(f"Reservation '{reservation_id}' not found.")
             return False
@@ -574,6 +602,7 @@ class Reservation:
         hotel_id = str(reservation.get("hotel_id", ""))
         hotels = storage.load_hotels()
         hotel = _find_record(hotels, "hotel_id", hotel_id)
+
         if hotel is None:
             _print_error("Hotel for this reservation was not found.")
             reservation["status"] = "cancelled"
@@ -582,6 +611,7 @@ class Reservation:
 
         current_available = int(hotel.get("available_rooms", 0))
         total_rooms = int(hotel.get("total_rooms", 0))
+
         if current_available >= total_rooms:
             _print_error("Hotel availability is already full; cannot cancel.")
             return False
@@ -592,4 +622,6 @@ class Reservation:
         if not storage.save_hotels(hotels):
             _print_error("Failed to save hotels file while cancelling.")
             return False
+
         return storage.save_reservations(reservations)
+        
