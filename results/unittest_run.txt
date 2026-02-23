@@ -1,0 +1,46 @@
+test_create_and_display_customer_success (test_reservation_system.ReservationSystemTests.test_create_and_display_customer_success)
+Create customer and read it back. ... ok
+test_create_and_display_hotel_success (test_reservation_system.ReservationSystemTests.test_create_and_display_hotel_success)
+Create hotel and read it back. ... ok
+test_delete_customer_success (test_reservation_system.ReservationSystemTests.test_delete_customer_success)
+Delete existing customer. ... ok
+test_delete_hotel_success (test_reservation_system.ReservationSystemTests.test_delete_hotel_success)
+Delete existing hotel. ... ok
+test_invalid_json_file_is_handled_and_execution_continues (test_reservation_system.ReservationSystemTests.test_invalid_json_file_is_handled_and_execution_continues)
+Invalid JSON in file prints error and returns empty list. ... ok
+test_invalid_json_type_is_handled (test_reservation_system.ReservationSystemTests.test_invalid_json_type_is_handled)
+Invalid JSON type should not crash and should return empty list. ... ok
+test_modify_customer_success (test_reservation_system.ReservationSystemTests.test_modify_customer_success)
+Modify customer name/email. ... ok
+test_modify_hotel_success (test_reservation_system.ReservationSystemTests.test_modify_hotel_success)
+Modify hotel name and expand rooms. ... ok
+test_negative_cancel_nonexistent_reservation (test_reservation_system.ReservationSystemTests.test_negative_cancel_nonexistent_reservation)
+Negative: cancel reservation that does not exist. ... ok
+test_negative_cancel_same_reservation_twice (test_reservation_system.ReservationSystemTests.test_negative_cancel_same_reservation_twice)
+Negative: cancelling twice should fail second time. ... ok
+test_negative_create_customer_invalid_id (test_reservation_system.ReservationSystemTests.test_negative_create_customer_invalid_id)
+Negative: create customer with empty ID. ... ok
+test_negative_create_hotel_invalid_rooms (test_reservation_system.ReservationSystemTests.test_negative_create_hotel_invalid_rooms)
+Negative: create hotel with non-positive total rooms. ... ok
+test_negative_delete_hotel_not_found (test_reservation_system.ReservationSystemTests.test_negative_delete_hotel_not_found)
+Negative: deleting a non-existing hotel should fail. ... ok
+test_negative_duplicate_customer_id (test_reservation_system.ReservationSystemTests.test_negative_duplicate_customer_id)
+Negative: creating the same customer twice should fail. ... ok
+test_negative_modify_customer_not_found (test_reservation_system.ReservationSystemTests.test_negative_modify_customer_not_found)
+Negative: modifying a non-existing customer should fail. ... ok
+test_negative_modify_hotel_reduce_below_reserved (test_reservation_system.ReservationSystemTests.test_negative_modify_hotel_reduce_below_reserved)
+Negative: reduce total rooms below reserved count. ... ok
+test_negative_reserve_room_missing_customer (test_reservation_system.ReservationSystemTests.test_negative_reserve_room_missing_customer)
+Negative: reserve with non-existing customer. ... ok
+test_negative_reserve_room_missing_hotel (test_reservation_system.ReservationSystemTests.test_negative_reserve_room_missing_hotel)
+Negative: reserve a room in a non-existing hotel. ... ok
+test_negative_reserve_room_no_availability (test_reservation_system.ReservationSystemTests.test_negative_reserve_room_no_availability)
+Negative: reserve when hotel has no rooms available. ... ok
+test_reservation_and_cancel_success (test_reservation_system.ReservationSystemTests.test_reservation_and_cancel_success)
+Reserve and cancel a reservation updates availability. ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.263s
+
+OK
+ERROR: Invalid JSON in 'hotels' file 'hotels.json': Expecting property name enclosed in double quotes: line 1 column 3 (char 2). Using empty list.
