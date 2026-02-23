@@ -1,0 +1,10 @@
+[
+  {
+    "reservation_id": "R-EXAMPLE-1",
+    "customer_id": "C1",
+    "hotel_id": "H1",
+    "start_date": "2026-01-01",
+    "end_date": "2026-01-02",
+    "status": "active"
+  }
+]
