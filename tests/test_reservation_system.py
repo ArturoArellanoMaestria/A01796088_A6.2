@@ -30,7 +30,6 @@ class ReservationSystemTests(unittest.TestCase):
     def setUp(self) -> None:
         """Create a temporary storage directory per test."""
         self.tmp = tempfile.TemporaryDirectory()
-# pylint: disable=consider-using-with
         base_dir = Path(self.tmp.name)
         self.storage = ReservationStorage.from_base_dir(base_dir)
 
@@ -38,14 +37,14 @@ class ReservationSystemTests(unittest.TestCase):
         """Cleanup temporary directory."""
         self.tmp.cleanup()
 
-    # -------------------------
-    # CASOS POSITIVOS
-    # -------------------------
-
     def test_create_and_display_customer_success(self) -> None:
         """Create customer and read it back."""
         created = Customer.create_customer(
-            self.storage, "C1", "Arturo", "a@a.com")
+            self.storage,
+            "C1",
+            "Arturo",
+            "a@a.com",
+        )
         self.assertTrue(created)
 
         info = Customer.display_customer_information(self.storage, "C1")
@@ -79,7 +78,8 @@ class ReservationSystemTests(unittest.TestCase):
         hotel_info = Hotel.display_hotel_information(self.storage, "H1")
         self.assertEqual(hotel_info["available_rooms"], 0)
 
-        cancelled = Hotel.cancel_a_reservation(self.storage, str(reservation_id))
+        cancelled = Hotel.cancel_a_reservation(
+            self.storage, str(reservation_id))
         self.assertTrue(cancelled)
 
         hotel_info2 = Hotel.display_hotel_information(self.storage, "H1")
@@ -144,15 +144,12 @@ class ReservationSystemTests(unittest.TestCase):
         self.assertEqual(info["total_rooms"], 3)
         self.assertEqual(info["available_rooms"], 3)
 
-    # -------------------------
-    # CASOS NEGATIVOS (>= 5)
-    # -------------------------
-
     def test_negative_create_customer_invalid_id(self) -> None:
         """Negative: create customer with empty ID."""
         buf = StringIO()
         with redirect_stdout(buf):
-            created = Customer.create_customer(self.storage, "", "Name", "x@x.com")
+            created = Customer.create_customer(
+                self.storage, "", "Name", "x@x.com")
         self.assertFalse(created)
         self.assertIn("ERROR:", buf.getvalue())
 
@@ -269,7 +266,11 @@ class ReservationSystemTests(unittest.TestCase):
         buf = StringIO()
         with redirect_stdout(buf):
             ok2 = Customer.create_customer(
-                self.storage, "C1", "Arturo 2", "b@b.com")
+                self.storage,
+                "C1",
+                "Arturo 2",
+                "b@b.com",
+            )
         self.assertFalse(ok2)
         self.assertIn("ERROR:", buf.getvalue())
 
@@ -278,7 +279,10 @@ class ReservationSystemTests(unittest.TestCase):
         buf = StringIO()
         with redirect_stdout(buf):
             updated = Customer.modify_customer_information(
-                self.storage, "C404", name="X", email="x@x.com"
+                self.storage,
+                "C404",
+                name="X",
+                email="x@x.com",
             )
         self.assertFalse(updated)
         self.assertIn("ERROR:", buf.getvalue())
@@ -298,12 +302,18 @@ class ReservationSystemTests(unittest.TestCase):
         buf = StringIO()
         with redirect_stdout(buf):
             res_id = Hotel.reserve_a_room(
-                self.storage, "H404", "C1", "2026-01-01", "2026-01-02"
+                self.storage,
+                "H404",
+                "C1",
+                "2026-01-01",
+                "2026-01-02",
             )
         self.assertIsNone(res_id)
         self.assertIn("ERROR:", buf.getvalue())
 
-    def test_invalid_json_file_is_handled_and_execution_continues(self) -> None:
+    def test_invalid_json_file_is_handled_and_execution_continues(
+        self,
+    ) -> None:
         invalid_path = Path(self.tmp.name) / "hotels.json"
         invalid_path.write_text("{ invalid json", encoding="utf-8")
 
@@ -317,7 +327,7 @@ class ReservationSystemTests(unittest.TestCase):
         self.assertTrue(ok)
 
     def test_invalid_json_type_is_handled(self) -> None:
-        """Invalid JSON type should not crash and should return empty list."""
+        """JSON type dict instead of list should not crash."""
         hotels_path = Path(self.tmp.name) / "hotels.json"
         hotels_path.write_text('{"hotel_id": "H1"}', encoding="utf-8")
 
